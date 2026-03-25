@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
@@ -14,14 +15,25 @@ const FRUITS = [
 
 const App = () => {
   // TODO 1: useState를 import하고, 장바구니(cart) state를 빈 배열로 선언하세요
+  const [cart, setCart] = useState([]);
 
   // TODO 2: 장바구니에 과일을 추가하는 함수 addToCart를 만드세요
   //         - fruit 객체를 파라미터로 받습니다
   //         - 이미 장바구니에 있는 과일은 추가하지 않습니다 (id로 비교)
+  const addToCart = (fruit) => {
+    const isExist = cart.some((item) => fruit.id === item.id);
+    if (!isExist) {
+      setCart((prev) => [...prev, fruit]);
+    }
+  };
 
   // TODO 3: 장바구니에서 과일을 제거하는 함수 removeFromCart를 만드세요
   //         - fruitId를 파라미터로 받습니다
   //         - filter를 사용하여 해당 과일을 제거합니다
+  const removeFromCart = (fruitId) => {
+    const newCart = cart.filter((item) => fruitId !== item.id);
+    setCart(newCart);
+  };
 
   return (
     <div>
@@ -49,9 +61,15 @@ const App = () => {
       </nav>
       <Routes>
         {/* TODO 4: 각 컴포넌트에 필요한 props를 전달하세요 */}
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route
+          path="/"
+          element={<Home fruits={FRUITS} onAddToCart={addToCart} />}
+        />
+        <Route
+          path="/about"
+          element={<About cart={cart} onRemoveFromCart={removeFromCart} />}
+        />
+        <Route path="/contact" element={<Contact cart={cart} />} />
       </Routes>
     </div>
   );
